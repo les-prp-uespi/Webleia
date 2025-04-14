@@ -1,0 +1,73 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./webleia-web
+      dockerfile: Dockerfile
+    container_name: frontend_react
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - webleia_net
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+
+  backend:
+    build:
+      context: ./webleia-api
+      dockerfile: Dockerfile
+    container_name: backend_laravel
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: webleia
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    networks:
+      - webleia_net
+    volumes:
+      - ./backend:/var/www
+  
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_laravel
+    ports:
+      - "3306:3306"
+    environment:
+      DB_DATABASE: webleia
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      MYSQL_DATABASE: webleia
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - webleia_net
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    restart: unless-stopped
+    networks:
+      - webleia_net
+
+volumes:
+  db_data:
+
+networks:
+  webleia_net:
+    driver: bridge

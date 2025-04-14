@@ -1,0 +1,89 @@
+image: node:14
+
+definitions:
+  commonItems:
+    &setEnv
+      export VERSION=$(npm run version --silent)
+  steps:
+  - step: &build
+      name: Build
+      caches:
+        - node
+      script:
+        - *setEnv
+        - export CI=false
+        - |
+          apt-get update
+          apt-get install -y jq
+        - export BITBUCKET_TRIGGERER_USERNAME=$(curl -X GET -g "https://api.bitbucket.org/2.0/users/${BITBUCKET_STEP_TRIGGERER_UUID}" | jq --raw-output '.display_name')
+        - echo "${BITBUCKET_TRIGGERER_USERNAME}" > ./autor.txt
+        - npm install
+        - curl "${TELEGRAM}${BITBUCKET_TRIGGERER_USERNAME} Iniciou build ${BITBUCKET_REPO_SLUG}:${VERSION} - ${BITBUCKET_BRANCH}"
+        - npm run build
+      after-script:
+        - *setEnv
+        - echo $BITBUCKET_EXIT_CODE
+        - |
+          if [ $BITBUCKET_EXIT_CODE != 0 ]; then
+            curl "${TELEGRAM}💥Build do ${BITBUCKET_REPO_SLUG}:${VERSION} deu ruim 🚨🚨🚨 - ${BITBUCKET_BRANCH}"
+          fi
+      artifacts:
+        - build/**
+        - package.json
+        - CHANGELOG.md
+        - autor.txt
+  - step: &deploy
+      name: Deploy
+      clone:
+        enabled: false
+      script:
+        - *setEnv
+        - echo $BITBUCKET_BRANCH
+        - AUTOR=$(cat autor.txt)
+        - curl "${TELEGRAM}${AUTOR} Iniciou Deploy ${BITBUCKET_REPO_SLUG}:${VERSION} - ${BITBUCKET_BRANCH}"
+        - pipe: atlassian/ftp-deploy:0.4.0
+          variables:
+            USER: $USER_FTP
+            PASSWORD: $PWD_FTP
+            SERVER: $SERVER_FTP
+            REMOTE_PATH: '/'
+            LOCAL_PATH: './build/'
+            EXTRA_ARGS: "--verbose -X *.htaccess -X *.ftpquota -X cgi-bin/ -X .well-known" #Arquivos e/ou pasta que não serão apagados após o deploy
+      after-script:
+        - *setEnv
+        - CL=$(cat CHANGELOG.md)
+        - AUTOR=$(cat autor.txt)
+        - export TZ="America/Fortaleza"
+        - DATA_HORA=$(date +"%d-%m-%Y %H:%M:%S")
+        - CHANGELOG=$(echo "$CL" | sed 's/\ /%20/g' | sed 's/\n/%0A/g')
+        - CHAT_URL=$(echo "$TELEGRAM" | cut -d '?' -f 1)
+        - CHAT_ID=$(echo "$TELEGRAM" | cut -d '?' -f 2)
+        - CHAT_ID=$(echo "$CHAT_ID" | cut -d '&' -f 1)
+        - |
+          export TEXTO_PADRAO="%0A<blockquote>Ambiente: ${BITBUCKET_DEPLOYMENT_ENVIRONMENT}%0AAcesso: ${URL_APP} %0ABranch: ${BITBUCKET_BRANCH} %0AVersão: ${VERSION}%0AChangelog: ${DATA_HORA}%0A${CHANGELOG} %0ADeploy feito por: <b>${AUTOR}</b></blockquote>"
+        - export MSG="Deploy do ${BITBUCKET_REPO_SLUG}"
+        - |
+          if [ $BITBUCKET_EXIT_CODE == 0 ]; then
+            curl -X POST \
+              $CHAT_URL \
+              -d $CHAT_ID \
+              -d "text=${MSG} concluído 🚀${TEXTO_PADRAO}"\
+              -d "parse_mode=html"
+          else
+            curl "${TELEGRAMAPI}😬${MSG} deu ruim, hein!!! 🚨🚨🚨${TEXTO_PADRAO}&parse_mode=html";
+          fi
+
+pipelines:
+  branches:
+    homologacao:
+      - step: *build
+      - step:
+          <<: *deploy
+          name: Deploy Em Homologação
+          deployment: Homologacao
+    # main:
+    #   - step: *build
+    #   - step:
+    #       <<: *deploy
+    #       name: Deploy em Produção
+    #       deployment: Production

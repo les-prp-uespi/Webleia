@@ -1,0 +1,76 @@
+name: Deploy Webleia Application
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Setup PHP
+              uses: actions/setup-java@v3
+              with:
+                distribution: 'temurin'
+                java-version: '17'
+
+            - name: Build ms-event-manager
+              run: |
+                cd ms-event-manager
+                mvn clean install -DskipTests
+
+            - name: Build ms-ticket-manager
+              run: |
+                cd ms-ticket-manager
+                mvn clean install -DskipTests
+
+            - name: Login Docker Hub
+              run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+            - name: Build Docker images of microservices
+              run: |
+                docker build -t liedsonlb/ms-event-manager ./ms-event-manager
+                docker build -t liedsonlb/ms-ticket-manager ./ms-ticket-manager
+
+            - name: Push Docker images
+              run: |
+                docker push liedsonlb/ms-event-manager
+                docker push liedsonlb/ms-ticket-manager
+
+    deploy:
+        needs: build
+        runs-on: self-hosted
+        steps:
+            - name: Pull Docker images of microservices
+              run: |
+                sudo docker pull liedsonlb/ms-event-manager:latest
+                sudo docker pull liedsonlb/ms-ticket-manager:latest
+
+            - name: Remove existing containers (if any)
+              run: |
+                sudo docker rm -f ms-event-manager || true
+                sudo docker rm -f ms-ticket-manager || true
+
+            - name: Run ms-event-manager container
+              run: |
+                sudo docker run -d -p 8080:8080 \
+                -e MONGO_USER=${{ secrets.MONGO_USER }} \
+                -e MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} \
+                -e MONGO_DB_EVENT=${{ secrets.MONGO_DB_EVENT }} \
+                --name ms-event-manager liedsonlb/ms-event-manager:latest
+
+            - name: Run ms-ticket-manager container
+              run: |
+                sudo docker run -d -p 8081:8081 \
+                -e MONGO_USER=${{ secrets.MONGO_USER }} \
+                -e MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} \
+                -e MONGO_DB_TICKET=${{ secrets.MONGO_DB_TICKET }} \
+                -e EVENT_SERVICE_URL=${{ secrets.EC2_INSTANCE_IP }} \
+                --name ms-ticket-manager liedsonlb/ms-ticket-manager:latest
+            
+            - name: Verify running containers
+              run: |
+                sudo docker ps
