@@ -18,7 +18,6 @@ WORKDIR /var/www
 
 # Copia os arquivos pro container
 COPY . .
-COPY .env .env
 
 # Instalando as dependências do Laravel
 RUN composer install --no-dev --optimize-autoloader
