@@ -28,13 +28,13 @@ jobs:
       - name: Build and Push React Frontend
         working-directory: ./frontend
         run: |
-          docker build -t $DOCKERHUB_USERNAME/react-app:latest -f Dockerfile.dev .
+          docker build -t $DOCKERHUB_USERNAME/react-app:latest -f Dockerfile .
           docker push $DOCKERHUB_USERNAME/react-app:latest
 
       - name: Build and Push Laravel Backend
         working-directory: ./backend
         run: |
-          docker build -t $DOCKERHUB_USERNAME/laravel-app:latest .
+          docker build -t $DOCKERHUB_USERNAME/laravel-app:latest -f Dockerfile .
           docker push $DOCKERHUB_USERNAME/laravel-app:latest
 
   deploy:
