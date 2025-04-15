@@ -41,16 +41,16 @@ jobs:
     needs: build-and-push
     runs-on: self-hosted
     steps:
+      - name: Create Docker network
+        run: docker network create webleia-net || true
+
       - name: Pull and run MySQL container
         run: |
           docker pull mysql:8.0
           docker rm -f mysql-laravel || true
           docker run -d --name mysql-laravel \
-            --network bridge \
+            --network webleia-net \
             -p 3306:3306 \
-            -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
-            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -e MYSQL_DATABASE=webleia \
             -e MYSQL_ROOT_PASSWORD=root \
             mysql:8.0
@@ -59,14 +59,18 @@ jobs:
         run: |
           docker pull $DOCKERHUB_USERNAME/react-app:latest
           docker rm -f react-app || true
-          docker run -d --name react-app --network bridge -p 80:80 $DOCKERHUB_USERNAME/react-app:latest
+          docker run -d --name react-app \
+            --network webleia-net \
+            -p 80:80 \
+            $DOCKERHUB_USERNAME/react-app:latest
 
       - name: Pull and run Laravel container
         run: |
           docker pull $DOCKERHUB_USERNAME/laravel-app:latest
           docker rm -f laravel-app || true
-          docker run -d --name laravel-app --network bridge -p 8000:8000 \
-            -e DB_HOST=mysql-laravel \
+          docker run -d --name laravel-app \
+            --network webleia-net \
+            -p 8000:8000 \
             -e DB_CONNECTION=${{ secrets.DB_CONNECTION }} \
             -e DB_HOST=${{ secrets.DB_HOST }} \
             -e DB_PORT=${{ secrets.DB_PORT }} \
