@@ -72,7 +72,7 @@ jobs:
             --network webleia-net \
             -p 8000:8000 \
             -e DB_CONNECTION=${{ secrets.DB_CONNECTION }} \
-            -e DB_HOST=${{ secrets.DB_HOST }} \
+            -e DB_HOST=mysql \
             -e DB_PORT=${{ secrets.DB_PORT }} \
             -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
             -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
@@ -80,7 +80,8 @@ jobs:
             $DOCKERHUB_USERNAME/laravel-app:latest
 
       - name: Wait for MySQL to be ready
-        run: sleep 10
+        run: |
+          while ! docker exec mysql-laravel nc -z mysql-laravel 3306; do sleep 1; done
 
       - name: Run Laravel migrations and seeders
         run: |
