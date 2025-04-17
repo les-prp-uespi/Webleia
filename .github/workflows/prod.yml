@@ -7,7 +7,6 @@ on:
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-  DB_HOST: mysql-laravel
   DB_USERNAME: root
   DB_PASSWORD: root
   DB_DATABASE: webleia
@@ -81,7 +80,10 @@ jobs:
 
       - name: Wait for MySQL to be ready
         run: |
-          while ! docker exec mysql-laravel nc -z mysql-laravel 3306; do sleep 1; done
+          until docker exec mysql-laravel mysqladmin ping -h "localhost" -u root -proot --silent; do
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
 
       - name: Run Laravel migrations and seeders
         run: |
