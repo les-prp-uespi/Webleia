@@ -3,7 +3,7 @@ version: "3.8"
 services:
   frontend:
     build:
-      context: ./webleia-web
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: frontend_react
     ports:
@@ -20,13 +20,14 @@ services:
 
   backend:
     build:
-      context: ./webleia-api
+      context: ./backend
       dockerfile: Dockerfile
     container_name: backend_laravel
     ports:
       - "8000:8000"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       DB_CONNECTION: default
       DB_HOST: mysql
@@ -38,7 +39,8 @@ services:
       - webleia_net
     volumes:
       - ./backend:/var/www
-  
+    command: sh -c "while ! nc -z mysql 3306; do sleep 1; done && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
+
   mysql:
     image: mysql:8.0
     container_name: mysql_laravel
@@ -54,6 +56,10 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - webleia_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
   mailpit:
     image: axllent/mailpit

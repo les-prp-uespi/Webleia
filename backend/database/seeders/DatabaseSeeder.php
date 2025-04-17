@@ -15,18 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $sqlFiles = [
-            database_path('cidades.sql'),
-            database_path('grau_instrucao.sql'),
-            database_path('instituicao_ensino.sql'),
-        ];
+        $sqlFiles = File::glob(database_path('*.sql'));
 
         foreach ($sqlFiles as $file) {
-            if (File::exists($file)) {
-                DB::unprepared(file_get_contents($file));
-            } else {
-                $this->command->error("Arquivo não encontrado: {$file}");
-            }
+            $this->command->info("Importando: {$file}");
+            DB::unprepared(file_get_contents($file));
         }
     }
 }
