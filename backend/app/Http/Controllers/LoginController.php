@@ -89,7 +89,7 @@ class LoginController extends ApiController {
     public function check_token(Request $request) : JsonResponse{
 
         $authorization = explode(':', $request->header('TokenUser', ''));
-        if (count($authorization) < 3) $this->responseJsonError('Token inválido!', 401);
+        if (count($authorization) < 3) return $this->responseJsonError('Token inválido!', 401);
 
         $user_id = intval($authorization[0]);
         $token_api = $authorization[1];
@@ -151,14 +151,14 @@ class LoginController extends ApiController {
         $data = $obj->toFullArray();
 
         //comentado pq deve ativar o cadastrado via email...
-//        if($request->get('run_login', Constantes::NAO) == Constantes::SIM){
-//            $data = $obj->usuario->toLoginArray($app->id);
-//            if($request->get('long_token', Constantes::NAO) == Constantes::SIM)
-//                $data['token'] = $obj->usuario->getLongToken();
-//
-//            $at = AplicacaoAcessoToken::createDefault($data['id'], $data['token'], $app->id);
-//            $data['token'] = $at->token;
-//        }
+       if($request->get('run_login', Constantes::NAO) == Constantes::SIM){
+           $data = $obj->usuario->toLoginArray($app->id);
+           if($request->get('long_token', Constantes::NAO) == Constantes::SIM)
+               $data['token'] = $obj->usuario->getLongToken();
+
+           $at = AplicacaoAcessoToken::createDefault($data['id'], $data['token'], $app->id);
+           $data['token'] = $at->token;
+       }
 
         return $this->responseJson($data);
 

@@ -22,5 +22,4 @@ class CustomEmailVerificationRequest extends EmailVerificationRequest {
             $this->usuario->markEmailAsVerified();
         }
     }
-
 }

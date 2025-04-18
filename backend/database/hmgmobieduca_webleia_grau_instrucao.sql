@@ -39,14 +39,14 @@ CREATE TABLE `grau_instrucao` (
 LOCK TABLES `grau_instrucao` WRITE;
 /*!40000 ALTER TABLE `grau_instrucao` DISABLE KEYS */;
 INSERT INTO `grau_instrucao` VALUES 
-  (1,'Ensino fundamental',NULL,NULL,NULL),
-	(2,'Ensino médio',NULL,NULL,NULL),
+  (1,'Ensino Fundamental',NULL,NULL,NULL),
+	(2,'Ensino Médio',NULL,NULL,NULL),
 	(3,'Graduação Incompleto',NULL,NULL,NULL),
-    (4,'Graduação Completo',NULL,NULL,NULL),
-    (5,'Mestrado Incompleto',NULL,NULL,NULL),
-    (6,'Mestrado Completo',NULL,NULL,NULL),
-    (7,'Doutorado Incompleto',NULL,NULL,NULL),
-    (8,'Doutorado Completo',NULL,NULL,NULL);
+  (4,'Graduação Completo',NULL,NULL,NULL),
+  (5,'Mestrado Incompleto',NULL,NULL,NULL),
+  (6,'Mestrado Completo',NULL,NULL,NULL),
+  (7,'Doutorado Incompleto',NULL,NULL,NULL),
+  (8,'Doutorado Completo',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `grau_instrucao` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
