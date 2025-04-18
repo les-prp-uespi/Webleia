@@ -50,9 +50,9 @@ jobs:
           docker run -d --name mysql-laravel \
             --network webleia-net \
             -p 3306:3306 \
-            -e DB_DATABASE: webleia \
-            -e DB_USERNAME: root \
-            -e DB_PASSWORD: root \
+            -e DB_DATABASE=webleia \
+            -e DB_USERNAME=root \
+            -e DB_PASSWORD=root \
             -e MYSQL_DATABASE=webleia \
             -e MYSQL_ROOT_PASSWORD=root \
             mysql:8.0
