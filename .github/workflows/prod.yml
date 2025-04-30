@@ -73,12 +73,12 @@ jobs:
           docker run -d --name laravel-app \
             --network webleia-net \
             -p 8000:8000 \
-            -e DB_CONNECTION=${{ secrets.DB_CONNECTION }} \
+            -e DB_CONNECTION=mysql \
             -e DB_HOST=mysql-laravel \
-            -e DB_PORT=${{ secrets.DB_PORT }} \
-            -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
-            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e DB_PORT=3306 \
+            -e DB_DATABASE=webleia \
+            -e DB_USERNAME=root \
+            -e DB_PASSWORD=root \
             -e MAIL_MAILER=smtp \
             -e MAIL_HOST=smtp.sendgrid.net \
             -e MAIL_PORT=587 \
