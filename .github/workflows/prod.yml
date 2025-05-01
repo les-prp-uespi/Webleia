@@ -74,13 +74,21 @@ jobs:
             --network webleia-net \
             -p 8000:8000 \
             -e DB_CONNECTION=mysql \
-            -e DB_HOST=turntable.proxy.rlwy.net \
-            -e DB_PORT=17008 \
-            -e DB_DATABASE=railway \
-            -e DB_USERNAME=root \
-            -e DB_PASSWORD=BXXJBeiTAoJixfMAgEPGtjMzjrqaImuL \
+            -e DB_HOST=mysql-laravel \
+            -e DB_PORT=${{ secrets.DB_PORT }} \
+            -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e MAIL_MAILER=smtp \
+            -e MAIL_HOST=smtp.sendgrid.net \
+            -e MAIL_PORT=587 \
+            -e MAIL_USERNAME=apikey \
+            -e MAIL_PASSWORD=${{ secrets.SENDGRID_API_KEY }} \
+            -e MAIL_ENCRYPTION=tls \
+            -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }} \
+            -e MAIL_FROM_NAME="Webleia" \
             -v /path/to/your/.env:/var/www/.env \
-            $DOCKERHUB_USERNAME/laravel-app:latest
+            $DOCKERHUB_USERNAME/laravel-app:latest]
 
       - name: Wait for MySQL to be ready
         run: |
