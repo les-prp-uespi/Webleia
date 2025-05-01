@@ -79,14 +79,6 @@ jobs:
             -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
             -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e MAIL_MAILER=smtp \
-            -e MAIL_HOST=smtp.sendgrid.net \
-            -e MAIL_PORT=587 \
-            -e MAIL_USERNAME=apikey \
-            -e MAIL_PASSWORD=${{ secrets.SENDGRID_API_KEY }} \
-            -e MAIL_ENCRYPTION=tls \
-            -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }} \
-            -e MAIL_FROM_NAME="Webleia" \
             -v /path/to/your/.env:/var/www/.env \
             $DOCKERHUB_USERNAME/laravel-app:latest
 
