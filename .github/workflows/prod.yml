@@ -88,7 +88,7 @@ jobs:
             -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }} \
             -e MAIL_FROM_NAME="Webleia" \
             -v /path/to/your/.env:/var/www/.env \
-            $DOCKERHUB_USERNAME/laravel-app:latest]
+            $DOCKERHUB_USERNAME/laravel-app:latest
 
       - name: Wait for MySQL to be ready
         run: |
