@@ -74,8 +74,8 @@ jobs:
             --network webleia-net \
             -p 8000:8000 \
             -e DB_CONNECTION=mysql \
-            -e DB_HOST=mysql.railway.internal \
-            -e DB_PORT=3306 \
+            -e DB_HOST=turntable.proxy.rlwy.net \
+            -e DB_PORT=17008 \
             -e DB_DATABASE=railway \
             -e DB_USERNAME=root \
             -e DB_PASSWORD=BXXJBeiTAoJixfMAgEPGtjMzjrqaImuL \
