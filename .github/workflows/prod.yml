@@ -73,7 +73,7 @@ jobs:
           docker run -d --name laravel-app \
             --network webleia-net \
             -p 8000:8000 \
-            -e DB_CONNECTION=${{ secrets.DB_CONNECTION }} \
+            -e DB_CONNECTION=default \
             -e DB_HOST=mysql-laravel \
             -e DB_PORT=${{ secrets.DB_PORT }} \
             -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
