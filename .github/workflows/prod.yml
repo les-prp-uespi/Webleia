@@ -76,9 +76,9 @@ jobs:
             -e DB_CONNECTION=default \
             -e DB_HOST=mysql-laravel \
             -e DB_PORT=3306 \
-            -e DB_DATABASE=webleia \
-            -e DB_USERNAME=root \
-            -e DB_PASSWORD=root \
+            -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -e MAIL_MAILER=smtp \
             -e MAIL_HOST=smtp.sendgrid.net \
             -e MAIL_PORT=587 \
