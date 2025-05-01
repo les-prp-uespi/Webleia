@@ -73,9 +73,9 @@ jobs:
           docker run -d --name laravel-app \
             --network webleia-net \
             -p 8000:8000 \
-            -e DB_CONNECTION=default \
+            -e DB_CONNECTION=${{ secrets.DB_CONNECTION }} \
             -e DB_HOST=mysql-laravel \
-            -e DB_PORT=3306 \
+            -e DB_PORT=${{ secrets.DB_PORT }} \
             -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
             -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
@@ -87,15 +87,6 @@ jobs:
             -e MAIL_ENCRYPTION=tls \
             -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }} \
             -e MAIL_FROM_NAME="Webleia" \
-            -e APP_NAME=Laravel \
-            -e APP_ENV=local \
-            -e APP_KEY=base64:vwTT+DEkFCW+lFrdfuljzc/Q8WaOkuyaWLUAeL3PvtA= \
-            -e APP_DEBUG=true \
-            -e APP_URL=http://localhost:8000 \
-            -e APP_WEB_URL=http://localhost:3000 \
-            -e OG_CHANNEL=stack \
-            -e LOG_DEPRECATIONS_CHANNEL=null \
-            -e LOG_LEVEL=debug \
             -v /path/to/your/.env:/var/www/.env \
             $DOCKERHUB_USERNAME/laravel-app:latest
 
