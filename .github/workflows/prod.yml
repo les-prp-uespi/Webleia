@@ -57,15 +57,6 @@ jobs:
             -e MYSQL_ROOT_PASSWORD=root \
             mysql:8.0
 
-      - name: Pull and run React container
-        run: |
-          docker pull $DOCKERHUB_USERNAME/react-app:latest
-          docker rm -f react-app || true
-          docker run -d --name react-app \
-            --network webleia-net \
-            -p 80:80 \
-            $DOCKERHUB_USERNAME/react-app:latest
-
       - name: Pull and run Laravel container
         run: |
           docker pull $DOCKERHUB_USERNAME/laravel-app:latest
@@ -89,6 +80,15 @@ jobs:
             -e MAIL_FROM_NAME="Webleia" \
             -v /path/to/your/.env:/var/www/.env \
             $DOCKERHUB_USERNAME/laravel-app:latest
+
+      - name: Pull and run React container
+        run: |
+          docker pull $DOCKERHUB_USERNAME/react-app:latest
+          docker rm -f react-app || true
+          docker run -d --name react-app \
+            --network webleia-net \
+            -p 80:80 \
+            $DOCKERHUB_USERNAME/react-app:latest
 
       - name: Wait for MySQL to be ready
         run: |
