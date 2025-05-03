@@ -64,12 +64,6 @@ jobs:
           docker run -d --name laravel-app \
             --network webleia-net \
             -p 8000:8000 \
-            -e DB_CONNECTION=mysql \
-            -e DB_HOST=mysql-laravel \
-            -e DB_PORT=3306 \
-            -e DB_DATABASE=webleia \
-            -e DB_USERNAME=root \
-            -e DB_PASSWORD=root \
             -e MAIL_MAILER=smtp \
             -e MAIL_HOST=smtp.sendgrid.net \
             -e MAIL_PORT=587 \
@@ -79,7 +73,6 @@ jobs:
             -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }} \
             -e MAIL_FROM_NAME="Webleia" \
             -e APP_DEBUG=true \
-            -v /github/workspace/backend/.env:/var/www/.env \
             $DOCKERHUB_USERNAME/laravel-app:latest
 
       - name: Pull and run React container
