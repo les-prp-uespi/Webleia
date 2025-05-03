@@ -78,6 +78,7 @@ jobs:
             -e MAIL_ENCRYPTION=tls \
             -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }} \
             -e MAIL_FROM_NAME="Webleia" \
+            -e APP_URL=https://webleia.prp.uespi.br/api/ \
             -e APP_DEBUG=true \
             $DOCKERHUB_USERNAME/laravel-app:latest
 
