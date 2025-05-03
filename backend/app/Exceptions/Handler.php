@@ -14,6 +14,8 @@ use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
+use Illuminate\Support\Facades\Log;
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -72,11 +74,23 @@ class Handler extends ExceptionHandler
             return $this->responseJsonErrorData('Dados inválidos', $exception->errors(), 400);
         }
 
-        if(!env('APP_DEBUG', false)){
-            if (($exception instanceof \PDOException) || ($exception instanceof QueryException)) {
-                return $this->responseJsonError('Erro ao executar instrução no banco de dados!');
+        if (($exception instanceof \PDOException) || ($exception instanceof QueryException)) {
+            // Registra todos os detalhes no log
+            if (class_exists(Log::class)) {
+                Log::error('Database error occurred', [
+                    'error' => $exception->getMessage(),
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                    'code' => $exception->getCode()
+                ]);
             }
-            return $this->responseJsonError($exception->getMessage(), $exception->getCode());
+            
+            // Resposta segura para o cliente
+            $message = config('app.debug') 
+                ? 'Database Error: ' . $exception->getMessage()
+                : 'Erro ao executar operação no banco de dados';
+            
+            return $this->responseJsonError($message, 500);
         }
 
         return new JsonResponse($this->convertExceptionToArray($exception), is_int($exception->getCode()) && $exception->getCode() > 0 ? $exception->getCode() : 500);
