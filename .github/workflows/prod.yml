@@ -64,6 +64,12 @@ jobs:
           docker run -d --name laravel-app \
             --network webleia-net \
             -p 8000:8000 \
+            -e DB_CONNECTION=mysql \
+            -e DB_HOST=mysql-laravel \
+            -e DB_PORT=3306 \
+            -e DB_DATABASE=webleia \
+            -e DB_USERNAME=root \
+            -e DB_PASSWORD=root \
             -e MAIL_MAILER=smtp \
             -e MAIL_HOST=smtp.sendgrid.net \
             -e MAIL_PORT=587 \
@@ -86,7 +92,8 @@ jobs:
 
       - name: Wait for MySQL to be ready
         run: |
-          until docker exec mysql-laravel mysqladmin ping -h "localhost" -u root -proot --silent; do
+          until docker run --rm --network webleia-net mysql:8.0 \
+            bash -c "mysqladmin ping -h mysql-laravel -u root -proot --silent"; do
             echo "Waiting for MySQL..."
             sleep 2
           done
