@@ -19,7 +19,16 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 
 # Copia os arquivos pro container
-COPY . .
+COPY composer.json composer.lock ./
+COPY database/ database/
+COPY app/ app/
+COPY bootstrap/ bootstrap/
+COPY config/ config/
+COPY public/ public/
+COPY resources/ resources/
+COPY routes/ routes/
+COPY storage/ storage/
+COPY artisan .
 
 # Instalando as dependências do Laravel
 RUN composer install --no-dev --optimize-autoloader
