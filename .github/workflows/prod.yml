@@ -79,7 +79,7 @@ jobs:
             -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }} \
             -e MAIL_FROM_NAME="Webleia" \
             -e APP_DEBUG=true \
-            -v /path/to/your/.env:/var/www/.env \
+            -v /github/workspace/backend/.env:/var/www/.env \
             $DOCKERHUB_USERNAME/laravel-app:latest
 
       - name: Pull and run React container
