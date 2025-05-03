@@ -63,7 +63,7 @@ function routeCrud(string $className, string $prefix, string $namespace = '', mi
 
 }
 
-Route::get('/', function () {
+Route::get('/api/', function () {
     return "Api Web Leia";
 });
 
