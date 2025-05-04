@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Lang;
 class VerificarEmail extends VerifyEmail {
     protected function buildMailMessage($url) {
 
-        $url = str_replace('/verificar/', '/api/verificar/', $url);
+        $url = str_replace('/acesso/', '/api/acesso/', $url);
 
         return (new MailMessage)
             ->subject(Lang::get('Valide seu endereço de e-mail'))
