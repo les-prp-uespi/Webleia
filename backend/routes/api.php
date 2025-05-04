@@ -67,7 +67,7 @@ Route::get('/', function () {
     return "Api Web Leia";
 });
 
-Route::group(['prefix' => 'api/acesso'], function (){
+Route::group(['prefix' => 'acesso'], function (){
     Route::post('login', 'LoginController@run');
     Route::post('recuperar_senha', 'LoginController@recuperarSenha');
     Route::post('resetar_senha', 'LoginController@resetarSenha');
