@@ -108,7 +108,18 @@ jobs:
       - name: Create storage link
         run: |
           docker exec laravel-app php artisan storage:link --force
-          echo "Storage link created successfully"
+          echo "Storage link created"
+
+      - name: Set storage permissions
+        run: |
+          docker exec laravel-app chown -R www-data:www-data storage/app/public
+          docker exec laravel-app chmod -R 775 storage/app/public
+          echo "Permissions updated"
+      
+      - name: Verify storage link
+        run: |
+          docker exec laravel-app ls -la /var/www/public/storage
+          docker exec laravel-app ls -la /var/www/storage/app/public
 
       # - name: Run Laravel migrations and seeders
       #   run: |
