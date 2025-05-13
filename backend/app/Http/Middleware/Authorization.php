@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use Illuminate\Support\Facades\Log;
+
 use App\Config\AppAuthorization;
 use Closure;
 use Illuminate\Contracts\Auth\Factory;
@@ -37,17 +39,38 @@ class Authorization
      * @param Closure $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next) {
+    public function handle(Request $request, Closure $next)
+    {
         $userSession = Auth::user();
-//        if($userSession == null) throw new \Exception(Constantes::MSG_NO_PERMISSION, 403);
+
+        // 1. Verifica autenticação
+        if (!$userSession) {
+            return response()->json(['message' => 'Não autenticado'], 401);
+        }
+
+        // 2. Verifica instância e pega perfil
         $perfil = [];
-        if($userSession instanceof Usuario) $perfil[] = $userSession->perfil;
+        if ($userSession instanceof Usuario) {
+            $perfil[] = $userSession->perfil;
+            Log::info("Usuário {$userSession->email} com perfil: " . json_encode($perfil));
+        } else {
+            Log::error("Tipo inválido para usuário: " . get_class($userSession));
+            return response()->json(['message' => 'Tipo de usuário inválido'], 403);
+        }
 
-        $ath = AppAuthorization::getInstance($perfil);
+        // 3. Verifica permissões
+        try {
+            $ath = AppAuthorization::getInstance($perfil);
 
-        if(!$ath->can($request))
-            throw new \Exception(Constantes::MSG_SUCCESS, 200);
+            if (!$ath->can($request)) {
+                Log::warning("Acesso negado para {$userSession->email} na rota {$request->path()}");
+                return response()->json(['message' => Constantes::MSG_NO_PERMISSION], 403);
+            }
 
-        return $next($request);
+            return $next($request);
+        } catch (\Exception $e) {
+            Log::error("Erro na autorização: " . $e->getMessage());
+            return response()->json(['message' => 'Erro interno na autorização'], 500);
+        }
     }
 }
