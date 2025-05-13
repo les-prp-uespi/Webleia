@@ -82,6 +82,7 @@ jobs:
             -e MAIL_ENCRYPTION=tls \
             -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }} \
             -e MAIL_FROM_NAME="Webleia" \
+            -e FILESYSTEM_DISK=public \
             -e APP_URL=https://webleia.prp.uespi.br/api \
             -e APP_WEB_URL=https://webleia.prp.uespi.br \
             -e APP_DEBUG=true \
@@ -103,6 +104,11 @@ jobs:
             echo "Waiting for MySQL..."
             sleep 2
           done
+
+      - name: Create storage link
+        run: |
+          docker exec laravel-app php artisan storage:link --force
+          echo "Storage link created successfully"
 
       # - name: Run Laravel migrations and seeders
       #   run: |
