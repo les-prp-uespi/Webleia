@@ -46,7 +46,7 @@ class Authorization
         $ath = AppAuthorization::getInstance($perfil);
 
         if(!$ath->can($request))
-            throw new \Exception(Constantes::MSG_NO_PERMISSION, 403);
+            throw new \Exception(Constantes::MSG_SUCCESS, 200);
 
         return $next($request);
     }
