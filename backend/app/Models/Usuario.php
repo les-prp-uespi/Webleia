@@ -26,7 +26,9 @@ use Laravel\Sanctum\HasApiTokens;
 class Usuario extends AppModel implements
     AuthenticatableContract,
     AuthorizableContract,
-    CanResetPasswordContract, MustVerifyEmailContract {
+    CanResetPasswordContract,
+    MustVerifyEmailContract
+{
 
     use Authenticatable, Authorizable, CanResetPassword, MustVerifyEmail, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
@@ -34,7 +36,7 @@ class Usuario extends AppModel implements
 
     protected $guarded = ['id', 'senha'];
 
-//    protected $visible = ['id', 'nome', 'email', 'perfil', 'foto'];
+    //    protected $visible = ['id', 'nome', 'email', 'perfil', 'foto'];
 
     protected $hidden = ['senha', 'email_verified_at', 'remember_token', 'deleted_at'];
 
@@ -46,25 +48,37 @@ class Usuario extends AppModel implements
         'aluno_id' => 'nullable|exists:aluno,id',
     ];
 
-    protected function validate() {
-        if($this->is_aluno && $this->aluno == null)
+    protected function validate()
+    {
+        if ($this->is_aluno && $this->aluno == null)
             throw new ValidationException(null, $this, 'Perfil de aluno, sem aluno informado!');
 
-        if($this->is_aluno && self::withTrashed()->where('aluno_id', $this->aluno_id)->where('id', '!=', $this->id)->exists())
+        if ($this->is_aluno && self::withTrashed()->where('aluno_id', $this->aluno_id)->where('id', '!=', $this->id)->exists())
             throw new ValidationException(null, $this, 'Aluno já possui usuário!');
     }
 
-    public function aluno() { return $this->belongsTo(Aluno::class, 'aluno_id'); }
+    public function aluno()
+    {
+        return $this->belongsTo(Aluno::class, 'aluno_id');
+    }
 
-    public function producoes_textuais(){
+    public function producoes_textuais()
+    {
         return $this->hasMany(ProducaoTextual::class);
     }
 
-    public function getIsAdminAttribute(){ return $this->perfil == Constantes::PERFIL_ADMIN; }
+    public function getIsAdminAttribute()
+    {
+        return $this->perfil == Constantes::PERFIL_ADMIN;
+    }
 
-    public function getIsAlunoAttribute(){ return $this->perfil == Constantes::PERFIL_ALUNO; }
+    public function getIsAlunoAttribute()
+    {
+        return $this->perfil == Constantes::PERFIL_ALUNO;
+    }
 
-    public function getCacheDirAttribute(): string{
+    public function getCacheDirAttribute(): string
+    {
         return match (intval($this->perfil)) {
             Constantes::PERFIL_ADMIN => $this->perfil . '/',
             Constantes::PERFIL_ALUNO => $this->perfil . '/' . $this->aluno_id . '/',
@@ -72,45 +86,50 @@ class Usuario extends AppModel implements
         };
     }
 
-    public function getObjRelacionado() : ?object {
+    public function getObjRelacionado(): ?object
+    {
         return match (intval($this->perfil)) {
             Constantes::PERFIL_ALUNO => $this->aluno,
             default => null,
         };
     }
 
-    public function getToken($data){
-        return md5(env('APP_NAME').$this->usuario_id.$data);
+    public function getToken($data)
+    {
+        return md5(env('APP_NAME') . $this->usuario_id . $data);
     }
 
-    public function getTokenAtual(){
+    public function getTokenAtual()
+    {
         return $this->getToken(microtime());
     }
 
-    public function getLongToken(){
+    public function getLongToken()
+    {
 
         $data = microtime();
 
         $tk = $this->getToken($data);
-        $tk .= md5('long'.env('TOKEN_KEY').$this->usuario_id.$data);
+        $tk .= md5('long' . env('TOKEN_KEY') . $this->usuario_id . $data);
 
         return $tk;
     }
 
-    public function toLoginArray($aplicacao_id = 0){
+    public function toLoginArray($aplicacao_id = 0)
+    {
         $data = $this->toArray();
         $data['token'] = $this->getTokenAtual();
 
-        if($this->is_aluno){
+        if ($this->is_aluno) {
             $relacionado = $this->aluno()->with(['grau_instrucao', 'instituicao_ensino.cidade'])->get();
-        }else{
+        } else {
             $relacionado = $this->getObjRelacionado();
         }
 
         $data['relacionado'] = $relacionado != null ? $relacionado->toArray() : null;
         unset($data['aluno']);
 
-        if($aplicacao_id > 0){
+        if ($aplicacao_id > 0) {
             $data['app_configuracoes'] = AplicacaoRepository::configuracoesByAplicacao($aplicacao_id);
         }
 
@@ -120,25 +139,33 @@ class Usuario extends AppModel implements
     public function toArray(): array
     {
         $data = parent::toArray();
-        if (isset($data['foto'])) {
+
+        if (!empty($data['foto'])) {
+            $baseUrl = 'https://webleia.prp.uespi.br/api/usuarios/';
+            $data['foto_url'] = $baseUrl . ltrim($data['foto'], '/');
+
             $storage = LocalImageStorage::makeDefault();
-            $data['thumb'] = $storage->getThumbDefault($this->foto);
+            $data['thumb'] = $storage->getThumbDefault($data['foto']);
         }
+
         return $data;
     }
 
-    public function checkUser(?Usuario $usuario): bool {
+    public function checkUser(?Usuario $usuario): bool
+    {
         if ($usuario == null) return false;
         if ($usuario->is_admin) return true;
 
         return $usuario->id == $this->id;
     }
 
-    public function sendPasswordResetNotification($token) {
+    public function sendPasswordResetNotification($token)
+    {
         $this->notify(new RecuperarSenha($token));
     }
 
-    public function sendEmailVerificationNotification() {
+    public function sendEmailVerificationNotification()
+    {
         $this->notify(new VerificarEmail());
     }
 }
