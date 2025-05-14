@@ -50,11 +50,11 @@ class LocalImageStorage
         }
 
         $cleanFolder = trim($folder, '/');
-        $path = $cleanFolder ? $cleanFolder . '/' . $filename : $filename;
+        $relativePath = $cleanFolder ? $cleanFolder . '/' . $filename : $filename;
 
         return (object)[
             'success' => true,
-            'path' => $this->getUrl($path)
+            'path' => 'https://webleia.prp.uespi.br/api/' . $this->getUrl($relativePath),
         ];
     }
 
