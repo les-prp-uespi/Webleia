@@ -50,11 +50,11 @@ class LocalImageStorage
         }
 
         $cleanFolder = trim($folder, '/');
-        $relativePath = $cleanFolder ? $cleanFolder . '/' . $filename : $filename;
+        $path = $cleanFolder ? $cleanFolder . '/' . $filename : $filename;
 
         return (object)[
             'success' => true,
-            'path' => 'https://webleia.prp.uespi.br/api/' . $this->getUrl($relativePath),
+            'path' => $this->getUrl($path)
         ];
     }
 
@@ -185,10 +185,10 @@ class LocalImageStorage
         $fullThumbPath = $this->getLocalPath($thumbPath);
 
         if (!file_exists($fullThumbPath)) {
-            return $path;
+            return 'https://webleia.prp.uespi.br/api/' . ltrim($path, '/');
         }
 
-        return $thumbPath;
+        return 'https://webleia.prp.uespi.br/api/' . ltrim($thumbPath, '/');
     }
 
     protected function getImageType(string $path): int
