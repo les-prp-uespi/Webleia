@@ -9,7 +9,7 @@ use App\Exceptions\ValidationException;
 use App\Notifications\RecuperarSenha;
 use App\Notifications\VerificarEmail;
 use App\Repository\AplicacaoRepository;
-use App\Storage\MobiStorage;
+use App\Storage\LocalImageStorage;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -119,7 +119,7 @@ class Usuario extends AppModel implements
 
     public function toArray(): array{
         $data = parent::toArray();
-        if(isset($data['foto'])) $data['thumb'] = MobiStorage::getThumbDefault($this->foto);
+        if(isset($data['foto'])) $data['thumb'] = LocalImageStorage::getThumbDefault($this->foto);
         return $data;
     }
 

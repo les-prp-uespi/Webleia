@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Storage\MobiStorage;
+use App\Storage\LocalImageStorage;
 use App\Util\Util;
 use Illuminate\Support\Facades\File;
 
@@ -39,7 +39,7 @@ class Anexo extends AppModel {
 
     protected static function booted() {
         static::deleted(function (Anexo $anexo) {
-            MobiStorage::makeDefault()->remove($anexo->arquivo);
+            LocalImageStorage::makeDefault()->remove($anexo->arquivo);
         });
     }
 

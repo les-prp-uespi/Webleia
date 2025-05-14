@@ -7,7 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 use App\Exceptions\ValidationException;
-use App\Storage\MobiStorage;
+use App\Storage\LocalImageStorage;
 
 trait UploadTrait{
 
@@ -85,7 +85,7 @@ trait UploadTrait{
         }
 
         $file_name = md5(uniqid(time())).'.'.$file->getClientOriginalExtension();
-        $repo = MobiStorage::makeDefault();
+        $repo = LocalImageStorage::makeDefault();
         $arq = $repo->upload($file->getRealPath(), $file_name, $folder, $file_size_max * 1024); //em bytes
 
         if(strlen($arq->url) > 0){
@@ -98,7 +98,7 @@ trait UploadTrait{
     }
 
     public function deleteFile(string $path): bool{
-        MobiStorage::makeDefault()->remove($path);
+        LocalImageStorage::makeDefault()->remove($path);
         return true;
     }
 
