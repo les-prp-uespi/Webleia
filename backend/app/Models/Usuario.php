@@ -117,9 +117,13 @@ class Usuario extends AppModel implements
         return $data;
     }
 
-    public function toArray(): array{
+    public function toArray(): array
+    {
         $data = parent::toArray();
-        if(isset($data['foto'])) $data['thumb'] = LocalImageStorage::getThumbDefault($this->foto);
+        if (isset($data['foto'])) {
+            $storage = LocalImageStorage::makeDefault();
+            $data['thumb'] = $storage->getThumbDefault($this->foto);
+        }
         return $data;
     }
 
