@@ -123,7 +123,7 @@ class LocalImageStorage
 
     protected function getUrl(string $path): string
     {
-        $base = rtrim('/uploads/' . $this->folderBase, '/');
+        $base = rtrim('/api/uploads/' . $this->folderBase, '/');
         $path = ltrim($path, '/');
 
         return $base . '/' . $path;
@@ -131,7 +131,7 @@ class LocalImageStorage
 
     protected function getLocalPath(string $url): string
     {
-        $basePath = '/uploads/' . $this->folderBase;
+        $basePath = '/api/uploads/' . $this->folderBase;
         if (strpos($url, $basePath) === false) {
             throw new \InvalidArgumentException("Caminho inválido: não pertence ao storage");
         }
