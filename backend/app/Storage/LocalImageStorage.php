@@ -120,7 +120,10 @@ class LocalImageStorage
 
     protected function getUrl(string $path): string
     {
-        return '/uploads/' . $this->folderBase . $path;
+        $base = rtrim('/uploads/' . $this->folderBase, '/');
+        $path = ltrim($path, '/');
+
+        return $base . '/' . $path;
     }
 
     protected function getLocalPath(string $url): string
