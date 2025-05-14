@@ -58,13 +58,13 @@ class LocalImageStorage
     public function rotate($path, $degrees)
     {
         $localPath = $this->getLocalPath($path);
-        
+
         $image = $this->loadImage($localPath);
-        
+
         $rotated = imagerotate($image, $degrees, 0);
-        
+
         $this->saveImage($rotated, $localPath, $this->getImageType($localPath));
-        
+
         return (object)[
             'success' => true,
             'path' => $path
@@ -74,12 +74,12 @@ class LocalImageStorage
     public function remove($path)
     {
         $localPath = $this->getLocalPath($path);
-        
+
         if (file_exists($localPath)) {
             unlink($localPath);
             return (object)['success' => true];
         }
-        
+
         throw new \Exception("Arquivo não encontrado", 404);
     }
 
@@ -87,12 +87,12 @@ class LocalImageStorage
     {
         $localPath = $this->getLocalPath($path);
         $thumbPath = $this->generateThumbPath($localPath);
-        
+
         $image = $this->loadImage($localPath);
-        
+
         $width = imagesx($image);
         $height = imagesy($image);
-        
+
         $ratio = $width / $height;
         if ($width > $height) {
             $newWidth = $size;
@@ -101,12 +101,12 @@ class LocalImageStorage
             $newHeight = $size;
             $newWidth = $size * $ratio;
         }
-        
+
         $thumb = imagecreatetruecolor($newWidth, $newHeight);
         imagecopyresampled($thumb, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-        
+
         $this->saveImage($thumb, $thumbPath, $this->getImageType($localPath));
-        
+
         return (object)[
             'success' => true,
             'path' => $this->getUrl(str_replace($this->getUploadPath(), '', $thumbPath))
@@ -125,8 +125,11 @@ class LocalImageStorage
 
     protected function getLocalPath(string $url): string
     {
-        $path = str_replace('/uploads/' . $this->folderBase, '', $url);
-        return $this->getUploadPath() . $path;
+        $basePath = '/uploads/' . $this->folderBase;
+        if (strpos($url, $basePath) === false) {
+            throw new \InvalidArgumentException("Caminho inválido: não pertence ao storage");
+        }
+        return $this->getUploadPath() . str_replace($basePath, '', $url);
     }
 
     protected function generateThumbPath(string $originalPath): string
@@ -138,7 +141,7 @@ class LocalImageStorage
     protected function loadImage(string $path)
     {
         $type = $this->getImageType($path);
-        
+
         switch ($type) {
             case IMAGETYPE_JPEG:
                 return imagecreatefromjpeg($path);
@@ -165,18 +168,17 @@ class LocalImageStorage
         }
     }
 
-    public static function getThumbDefault($path) {
+    public function getThumbDefault($path)
+    {
         if ($path == null) return null;
         if (empty($path)) return "";
 
         $pathInfo = pathinfo($path);
-        $dirname = $pathInfo['dirname'];
-        $filename = $pathInfo['filename'];
-        $extension = $pathInfo['extension'];
+        $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension'];
 
-        $thumbPath = $dirname . '/' . $filename . '_thumb.' . $extension;
+        $fullThumbPath = $this->getLocalPath($thumbPath);
 
-        if (!file_exists(public_path($thumbPath))) {
+        if (!file_exists($fullThumbPath)) {
             return $path;
         }
 
