@@ -141,8 +141,9 @@ class Usuario extends AppModel implements
         $data = parent::toArray();
 
         if (!empty($data['foto'])) {
-            $baseUrl = 'https://webleia.prp.uespi.br/api/usuarios/';
+            $baseUrl = 'https://webleia.prp.uespi.br/api/';
             $data['foto_url'] = $baseUrl . ltrim($data['foto'], '/');
+
 
             $storage = LocalImageStorage::makeDefault();
             $data['thumb'] = $storage->getThumbDefault($data['foto']);
