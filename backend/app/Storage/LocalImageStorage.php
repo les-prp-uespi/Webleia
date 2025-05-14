@@ -49,9 +49,12 @@ class LocalImageStorage
             throw new \Exception("Falha ao mover o arquivo enviado");
         }
 
+        $cleanFolder = trim($folder, '/');
+        $path = $cleanFolder ? $cleanFolder . '/' . $filename : $filename;
+
         return (object)[
             'success' => true,
-            'path' => $this->getUrl($folder . '/' . $filename)
+            'path' => $this->getUrl($path)
         ];
     }
 
