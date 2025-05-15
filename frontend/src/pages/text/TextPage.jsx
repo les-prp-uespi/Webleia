@@ -140,7 +140,7 @@ const TextPage = () => {
                         onClick={() => setCurrentStep(prev => prev - 1)}
                         sx={{ visibility: currentStep === 0 ? "hidden" : "visible" }}
                     >
-                        Passo anterior
+                        Etapa anterior
                     </Button>
                     <Stepper sx={{ width: "600px" }} activeStep={currentStep} alternativeLabel>
                         {steps.map((label, index) => (
