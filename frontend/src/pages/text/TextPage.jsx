@@ -156,7 +156,7 @@ const TextPage = () => {
                         onClick={() => setCurrentStep(prev => prev + 1)}
                         sx={{ visibility: currentStep === maxStep ? "hidden" : "visible" }}
                     >
-                        Próximo passo
+                        Próxima etapa
                     </Button>
                 </Box>
             )}
