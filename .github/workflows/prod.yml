@@ -80,7 +80,6 @@ jobs:
             -e APP_DEBUG=true \
             $DOCKERHUB_USERNAME/laravel-app:latest
 
-            
       - name: Pull and run React container
         run: |
           docker pull $DOCKERHUB_USERNAME/react-app:latest
