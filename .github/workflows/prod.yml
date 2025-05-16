@@ -75,10 +75,10 @@ jobs:
             -e DB_USERNAME=root \
             -e DB_PASSWORD=root \
             -e MAIL_MAILER=smtp \
-            -e MAIL_HOST=smtp.sendgrid.net \
+            -e MAIL_HOST=${{ secrets.MAIL_HOST }} \
             -e MAIL_PORT=587 \
-            -e MAIL_USERNAME=apikey \
-            -e MAIL_PASSWORD=${{ secrets.SENDGRID_API_KEY }} \
+            -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
+            -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
             -e MAIL_ENCRYPTION=tls \
             -e MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }} \
             -e MAIL_FROM_NAME="Webleia" \
@@ -121,7 +121,7 @@ jobs:
           docker exec laravel-app ls -la /var/www/public/storage
           docker exec laravel-app ls -la /var/www/storage/app/public
 
-      - name: Run Laravel migrations and seeders
-        run: |
-          docker exec laravel-app php artisan migrate --force
-          docker exec laravel-app php artisan db:seed --force
+      # - name: Run Laravel migrations and seeders
+      #   run: |
+      #     docker exec laravel-app php artisan migrate --force
+      #     docker exec laravel-app php artisan db:seed --force
