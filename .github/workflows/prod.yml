@@ -87,6 +87,7 @@ jobs:
             -e APP_WEB_URL=https://webleia.prp.uespi.br \
             -e APP_DEBUG=true \
             $DOCKERHUB_USERNAME/laravel-app:latest
+            
 
       - name: Pull and run React container
         run: |
