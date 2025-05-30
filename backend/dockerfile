@@ -35,5 +35,9 @@ COPY . .
 # Instalando as dependências do Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Inicialização do container
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# Copia o script de entrada que vai aguardar o banco
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Define o script de entrada para aguardar o banco e iniciar o servidor
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
