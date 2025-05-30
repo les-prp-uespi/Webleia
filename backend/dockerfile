@@ -25,19 +25,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Adiciona wait-for-it ao container
-COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
-RUN chmod +x /usr/local/bin/wait-for-it.sh
-
 # Copia os arquivos pro container
 COPY . .
 
 # Instalando as dependências do Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Copia o script de entrada que vai aguardar o banco
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Define o script de entrada para aguardar o banco e iniciar o servidor
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# Inicialização do container
+CMD php artisan serve --host=0.0.0.0 --port=8000
