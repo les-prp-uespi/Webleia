@@ -46,7 +46,7 @@ jobs:
       - name: Create Docker volume for MySQL
         run: docker volume create mysql_data || true
 
-      - name: Pull and run MySQL container
+      - name: Pull and run MySQL container.
         run: |
           docker pull mysql:8.0
           docker rm -f mysql-laravel || true
