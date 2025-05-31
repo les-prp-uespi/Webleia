@@ -185,10 +185,10 @@ class LocalImageStorage
         $fullThumbPath = $this->getLocalPath($thumbPath);
 
         if (!file_exists($fullThumbPath)) {
-            return 'https://webleia.prp.uespi.br/api/' . ltrim($path, '/');
+            return 'https://webleia.uespi.br/api/' . ltrim($path, '/');
         }
 
-        return 'https://webleia.prp.uespi.br/api/' . ltrim($thumbPath, '/');
+        return 'https://webleia.uespi.br/api/' . ltrim($thumbPath, '/');
     }
 
     protected function getImageType(string $path): int

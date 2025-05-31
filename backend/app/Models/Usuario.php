@@ -141,7 +141,7 @@ class Usuario extends AppModel implements
         $data = parent::toArray();
 
         if (!empty($data['foto'])) {
-            $baseUrl = 'https://webleia.prp.uespi.br/api/';
+            $baseUrl = 'https://webleia.uespi.br/api/';
             $data['foto_url'] = $baseUrl . ltrim($data['foto'], '/');
 
 
