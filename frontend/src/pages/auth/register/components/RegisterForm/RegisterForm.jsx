@@ -75,7 +75,7 @@ const RegisterForm = () => {
       run_login: 1,
       long_token: 1,
       uf: estado,
-      instituicao_ensino_id: instituicaoEnsino?.id || null,
+      instituicao_ensino_id: instituicaoEnsino?.id || 373,
       grau_instrucao_id: grauInstrucao,
     });
   };
