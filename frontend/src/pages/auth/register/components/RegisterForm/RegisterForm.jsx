@@ -68,6 +68,11 @@ const RegisterForm = () => {
       return;
     }
 
+    if (!data.instituicaoEnsino?.id) {
+      toastr.error('Selecione uma instituição de ensino válida');
+      return;
+    }
+
     const response = await cadastrarUsuarioRequest({
       nome: data.nome,
       email: data.email,
