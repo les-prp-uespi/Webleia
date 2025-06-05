@@ -32,7 +32,10 @@ const RegisterForm = () => {
   const [estado, setEstado] = useState();
   const [success, setSuccess] = useState(false);
   const [grauInstrucao, setGrauInstrucao] = useState();
-  const [instituicaoEnsino, setInstituicaoEnsino] = useState();
+  const [instituicaoEnsino, setInstituicaoEnsino] = useState({
+    id: 373,
+    label: "UNIVERSIDADE ESTADUAL DO PIAUÍ",
+  });
 
   const [nomeInstituicaoVisual, setNomeInstituicaoVisual] = useState("");
   const [nomeInstituicao, setNomeInstituicao] = useState();
@@ -74,8 +77,7 @@ const RegisterForm = () => {
     }
 
     if (data.instituicaoEnsino?.id === undefined) {
-      data.instituicaoEnsino = 373;
-      toastr.error('Selecione uma instituição de ensino válida');
+      data.instituicaoEnsino.id = 373;
       return;
     }
 
