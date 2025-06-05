@@ -76,11 +76,6 @@ const RegisterForm = () => {
       return;
     }
 
-    if (data.instituicaoEnsino?.id === undefined) {
-      data.instituicaoEnsino.id = 373;
-      return;
-    }
-
     const response = await cadastrarUsuarioRequest({
       nome: data.nome,
       email: data.email,
