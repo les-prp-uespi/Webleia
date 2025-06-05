@@ -63,15 +63,17 @@ const RegisterForm = () => {
   const onSubmit = async (data, e) => {
     e.preventDefault();
 
-    console.log(instituicaoEnsino);
-    console.log(instituicaoEnsino?.id);
+    console.log(data.instituicaoEnsino);
+    console.log(data.instituicaoEnsino?.Objectid);
+    console.log(data.instituicaoEnsino?.id);
+    console.log(data.instituicaoEnsino?.label);
 
     if (data.senha !== data.senhaConfirmacao) {
       toastr.error('As senhas digitadas não conferem');
       return;
     }
 
-    if (!data.instituicaoEnsino?.id) {
+    if (!data.instituicaoEnsino?.label) {
       toastr.error('Selecione uma instituição de ensino válida');
       return;
     }
