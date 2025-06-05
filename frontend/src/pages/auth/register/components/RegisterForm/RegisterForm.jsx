@@ -73,7 +73,7 @@ const RegisterForm = () => {
       return;
     }
 
-    if (!data.instituicaoEnsino?.id === undefined) {
+    if (data.instituicaoEnsino?.id === undefined) {
       data.instituicaoEnsino = 373;
       toastr.error('Selecione uma instituição de ensino válida');
       return;
