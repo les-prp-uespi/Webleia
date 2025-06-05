@@ -63,6 +63,9 @@ const RegisterForm = () => {
   const onSubmit = async (data, e) => {
     e.preventDefault();
 
+    console.log(instituicaoEnsino);
+    console.log(instituicaoEnsino?.id);
+
     if (data.senha !== data.senhaConfirmacao) {
       toastr.error('As senhas digitadas não conferem');
       return;
