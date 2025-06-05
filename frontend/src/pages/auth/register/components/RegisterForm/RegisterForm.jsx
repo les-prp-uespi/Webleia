@@ -196,38 +196,30 @@ const RegisterForm = () => {
             marginLeft: 0,
           }}
         >
-          <Controller
-            name="instituicaoEnsino"
-            control={control}
-            rules={{ required: "Instituição é obrigatória" }}
-            render={({ field }) => (
-              <Autocomplete
-                {...field}
-                options={instituicoesEnsinoDataFormatted}
-                fullWidth
-                disablePortal
-                getOptionLabel={(option) => option.label || ""}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                onChange={(e, newValue) => {
-                  field.onChange(newValue);
-                  setInstituicaoEnsino(newValue);
-                }}
-                inputValue={nomeInstituicaoVisual}
-                onInputChange={(event, newInputValue) => {
-                  handleChangeNome(newInputValue, event?.type);
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Instituição de ensino"
-                    placeholder="Selecione uma IES"
-                    slotProps={instituicoesEnsinoResponse.loading ? {
-                      input: {
-                        endAdornment: <CircularProgress sx={{ position: 'absolute', right: "10px" }} size="20px" />,
-                      }
-                    } : undefined}
-                  />
-                )}
+          <Autocomplete
+            disablePortal
+            options={instituicoesEnsinoDataFormatted}
+            fullWidth
+            filterOptions={(options) => options}
+            noOptionsText="Lista de instituições vazia"
+            onChange={(e, newValue) => {
+              setInstituicaoEnsino(newValue);
+            }}
+            inputValue={nomeInstituicaoVisual}
+            onInputChange={(event, newInputValue) => {
+              handleChangeNome(newInputValue, event?.type);
+            }}
+            renderInput={(params) => (
+              <TextField
+                slotProps={instituicoesEnsinoResponse.loading ? {
+                  input: {
+                    endAdornment: <CircularProgress sx={{ position: 'absolute', right: "10px" }} size="20px" />,
+                  }
+                } : undefined}
+                placeholder="Selecione uma IES"
+                {...params}
+                style={{ margin: 0 }}
+                label="Instituição de ensino"
               />
             )}
           />
