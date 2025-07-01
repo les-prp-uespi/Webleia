@@ -27,14 +27,13 @@ jobs:
       - name: Build and Push React Frontend
         working-directory: ./frontend
         run: |
-          docker build -t $DOCKERHUB_USERNAME/react-app:latest -f Dockerfile .
-          docker push $DOCKERHUB_USERNAME/react-app:latest
-
+          docker build -t $DOCKERHUB_USERNAME/react-app-prp:latest -f Dockerfile .
+          docker push $DOCKERHUB_USERNAME/react-app-prp:latest
       - name: Build and Push Laravel Backend
         working-directory: ./backend
         run: |
-          docker build -t $DOCKERHUB_USERNAME/laravel-app:latest -f Dockerfile .
-          docker push $DOCKERHUB_USERNAME/laravel-app:latest
+          docker build -t $DOCKERHUB_USERNAME/laravel-app-prp:latest -f Dockerfile .
+          docker push $DOCKERHUB_USERNAME/laravel-app-prp:latest
 
   deploy:
     needs: build-and-push
@@ -63,7 +62,7 @@ jobs:
 
       - name: Pull and run Laravel container
         run: |
-          docker pull $DOCKERHUB_USERNAME/laravel-app:latest
+          docker pull $DOCKERHUB_USERNAME/laravel-app-prp:latest
           docker rm -f laravel-app || true
           docker run -d --name laravel-app \
             --network webleia-net \
@@ -86,17 +85,17 @@ jobs:
             -e APP_URL=https://webleia.prp.uespi.br/api \
             -e APP_WEB_URL=https://webleia.prp.uespi.br \
             -e APP_DEBUG=true \
-            $DOCKERHUB_USERNAME/laravel-app:latest
+            $DOCKERHUB_USERNAME/laravel-app-prp:latest
             
 
       - name: Pull and run React container
         run: |
-          docker pull $DOCKERHUB_USERNAME/react-app:latest
+          docker pull $DOCKERHUB_USERNAME/react-app-prp:latest
           docker rm -f react-app || true
           docker run -d --name react-app \
             --network webleia-net \
             -p 80:80 \
-            $DOCKERHUB_USERNAME/react-app:latest
+            $DOCKERHUB_USERNAME/react-app-prp:latest
 
       - name: Wait for MySQL to be ready
         run: |
@@ -122,7 +121,7 @@ jobs:
           docker exec laravel-app ls -la /var/www/public/storage
           docker exec laravel-app ls -la /var/www/storage/app/public
 
-      - name: Run Laravel migrations and seeders
-        run: |
-          docker exec laravel-app php artisan migrate --force
-          docker exec laravel-app php artisan db:seed --force
+      # - name: Run Laravel migrations and seeders
+      #   run: |
+      #     docker exec laravel-app php artisan migrate --force
+      #     docker exec laravel-app php artisan db:seed --force
