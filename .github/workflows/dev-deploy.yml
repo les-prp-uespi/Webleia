@@ -1,8 +1,8 @@
-name: Deploy React + Laravel via Docker
+name: Deploy React + Laravel via Docker (DEV)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev ]
 
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}

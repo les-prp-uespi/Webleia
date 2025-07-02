@@ -1,0 +1,37 @@
+name: Deploy React + Laravel via Docker (PROD)
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  DB_USERNAME: root
+  DB_PASSWORD: root
+  DB_DATABASE: webleia
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push React Frontend (prod)
+        working-directory: ./frontend
+        run: |
+          docker build -t $DOCKERHUB_USERNAME/react-app:latest -f Dockerfile .
+          docker push $DOCKERHUB_USERNAME/react-app:latest
+
+      - name: Build and Push Laravel Backend (prod)
+        working-directory: ./backend
+        run: |
+          docker build -t $DOCKERHUB_USERNAME/laravel-app:latest -f Dockerfile .
+          docker push $DOCKERHUB_USERNAME/laravel-app:latest
