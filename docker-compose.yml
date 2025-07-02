@@ -22,7 +22,7 @@ services:
       - webleia_net
     volumes:
       - ./backend:/var/www
-    command: sh -c "while ! mysqladmin ping -h mysql -uroot -proot --silent; do sleep 1; echo 'Waiting for MySQL...'; done && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
+    command: sh -c "while ! mysqladmin ping -h mysql -uroot -proot --silent; do sleep 1; echo 'Waiting for MySQL...'; done && php artisan serve --host=0.0.0.0 --port=8000"
 
   frontend:
     build:
