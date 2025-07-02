@@ -120,8 +120,3 @@ jobs:
         run: |
           docker exec laravel-app ls -la /var/www/public/storage
           docker exec laravel-app ls -la /var/www/storage/app/public
-
-      # - name: Run Laravel migrations and seeders
-      #   run: |
-      #     docker exec laravel-app php artisan migrate --force
-      #     docker exec laravel-app php artisan db:seed --force
